@@ -58,7 +58,7 @@
 <div style="margin-top: 5em;" *ngIf="authService.isAuthenticated()">
 
 <div class="ui inverted violet segment">
-<h3>Node information</h3>
+<h3>Connected to Node {{authService.getNode()}}</h3>
 Default account on the node: <i>{{defaultAccount}}</i><br>
 Total number of accounts: <i>{{accounts.length}}</i><br>
 Current Block Number: <i>{{blockNumber}}</i><br>

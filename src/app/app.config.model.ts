@@ -4,7 +4,8 @@ export interface IAppConfig {
     };
     contracts: {
         claimContractAddr: string;
-        loginContractAddr: string;
+        loginContractAddrNode1: string;
+        loginContractAddrNode2: string;
         loginContractAbi: string;
     };
 }

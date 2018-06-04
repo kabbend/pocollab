@@ -4,7 +4,8 @@
      },
     "contracts": {
     "claimContractAddr": "0xe273fd8a6deb07c4bd7226e0ba05724dcb4bd38a",
-    "loginContractAddr": "0x1f307a75b97982f13410f85dca9212bc772b1943",
+    "loginContractAddrNode1": "0x1f307a75b97982f13410f85dca9212bc772b1943",
+    "loginContractAddrNode2": "0x180893a0ec847fa8c92786791348d7d65916acbb",
     "loginContractAbi": "./contracts/Login.v2.json"
     }
 }
