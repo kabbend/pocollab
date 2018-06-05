@@ -7,6 +7,9 @@
 
 # dependencies
 /node_modules
+/openresty
+/oldsrc
+.oldgit/
 
 # IDEs and editors
 /.idea
