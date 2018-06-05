@@ -17,7 +17,7 @@ export class nodeService {
 
   web3: any;
 
-  _claimContractAddr = AppConfig.settings.contracts.claimContractAddr; 
+  _claimContractAddr = AppConfig.settings.contracts.claimContractAddr;  // FIXME: this depends on the node !
   _claimContractAbi = require('../contracts/ownerclaimsContract.json');
 
   // all accounts on the node
@@ -27,17 +27,21 @@ export class nodeService {
   }
 
   // This function is called when authentication is done, and must be called prior to any access to Web3.js
-  public init() {
+  public init() : Promise<string> {
 
-    // prepare appropriate HTTP header with authorization token
+    // prepare appropriate HTTP header with authorization token and node port
     var headers = {
-  	"Authorization":  "Bearer " + this.authService.getToken()
+  	"Authorization":  "Bearer " + this.authService.getToken(),
+  	"x-quorum-port":  this.authService.getNode(),
 	};
 
-    var provider = new HttpHeaderProvider('http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:8080', headers);
-    this.web3 = new Web3(provider);
-    console.log("connected to node via web3");
-    console.log("claim contract addr: " + this._claimContractAddr);
+    return new Promise<string>( (resolve,reject) => {
+      var provider = new HttpHeaderProvider('http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:8080', headers);
+      this.web3 = new Web3(provider);
+      console.log("connected to node " + this.authService.getNode() + " via web3");
+      console.log("claim contract addr: " + this._claimContractAddr);
+      resolve("");
+    });
 
   }
 
@@ -98,7 +102,6 @@ export class nodeService {
   // populate the web3 object with this default account for all further operations
 
   public getAccounts( callback ): Promise<string> {
-  if (this._accounts == null) {
      return new Promise<string>((resolve, reject) => {
       this.web3.eth.getAccounts((err, accs) => {
         if (err != null) { console.log('There was an error fetching your accounts.'); reject(); }
@@ -109,8 +112,6 @@ export class nodeService {
         resolve( callback ( this._accounts ));
       })
     });
-  }
-  return Promise.resolve( callback (this._accounts) );
  }
 
   public getBlockNumber( callback ): Promise<string> {

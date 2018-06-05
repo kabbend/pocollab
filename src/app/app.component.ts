@@ -5,8 +5,6 @@ import 'rxjs/add/operator/map';
 
 import { SuiModule } from 'ng2-semantic-ui';
 
-import { PO } from './store/po.model';
-import { poService } from './store/po.service';
 import { nodeService } from './store/node.service';
 import { AuthService } from './auth.service';
 
@@ -27,7 +25,7 @@ export class AppComponent implements OnInit {
   isLoading = null;
   accounts: string[] = [];
   
-  constructor(private poService : poService, private nodeService : nodeService, private authService: AuthService ) { 
+  constructor(private nodeService : nodeService, private authService: AuthService ) { 
   }
 
   ngOnInit() : void {
@@ -36,13 +34,13 @@ export class AppComponent implements OnInit {
   login( account: string, key: string ) {
 
     this.loginStatus = '';
-    this.isLoading = true;
 
-    this.authService.login( account, key ).then( 
+    this.authService.login( account, key )
+     .then( 
 	logged => {
 
 		// initialize the connection to the node prior to anything else !!
-    		this.nodeService.init();
+    		this.nodeService.init().then( initialized => { 
 
     		// retrieve the last block number and then the details
     		this.nodeService.getBlockNumber( res => { 
@@ -58,6 +56,7 @@ export class AppComponent implements OnInit {
 			if (res && res.length != 0) this.defaultAccount = res[0]; 
 		});
 
+		});
   	},
 
 	error => {
@@ -67,9 +66,7 @@ export class AppComponent implements OnInit {
 
   	}
 
-	);
-
-    this.isLoading = null;
+    );
 
   }
  
