@@ -19,7 +19,6 @@ export class AuthService {
   _pkey : string = '';
 
   constructor( private http: HttpClient ) {
-	this.logout(); // we reset all token information at boostrap, for testing purpose
   }
 
   // request the node service to attempt a login using the private key of the user  
