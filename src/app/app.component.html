@@ -1,7 +1,7 @@
 <div class="ui fixed inverted borderless pointing menu">
       <a href="#" class="item">
         <img class="logo" src="assets/p2p.png"> &nbsp;Collaboration BC
-        <div class="item" *ngIf="authService.isAuthenticated()">currently logged as {{authService.getUser()}}</div>
+        <div class="item" *ngIf="authService.isAuthenticated()">currently logged on Node {{authService.getNode()}}</div>
       </a>
       <div class="right menu">
       	  <div class="item" *ngIf="authService.isAuthenticated()"> <a class="ui button" (click)="logout()"><small>Log out</small></a> </div>
@@ -57,6 +57,7 @@
 <!-- PAGE CONTENT BLOCK -->
 <div style="margin-top: 5em;" *ngIf="authService.isAuthenticated()">
 
+<!--
 <div class="ui inverted violet segment">
 <h3>Connected to Node {{authService.getNode()}}</h3>
 Default account on the node: <i>{{defaultAccount}}</i><br>
@@ -66,61 +67,60 @@ Current Block Number: <i>{{blockNumber}}</i><br>
   <input #box type="text" placeholder="value...">
 </div>
 <a class="ui button" (click)="basicTest(box.value)"><small>basic test</small></a>
-<!--
-<sui-accordion [closeOthers]="false">
-    <sui-accordion-panel [isOpen]="false">
-        <div title>
-            <i class="dropdown icon"></i>
-            Current Block details 
-        </div>
-        <div content>
-            <pre>{{blockDetail}}</pre>
-        </div>
-    </sui-accordion-panel>
-</sui-accordion>
-<h4>Last Blockchain response:</h4>
-{{blockchainResponse | async}}
--->
-<!--
-<table class="ui small celled table">
-  <tbody>
-   <tr *ngFor="let account of accounts$ | async; let i = index">
-    <td>{{account}}</td>
-   </tr>
-  </tbody>
-</table>
--->
 </div>
+-->
 
+<div class="ui segment">
 
 <h3>PO in the Blockchain:</h3>
 
-<table class="ui small celled table">
-  <thead>
-  <tr><th>Index</th>
-    <th>PO Id</th>
-    <th>BCP</th>
-    <th>SCP</th>
-    <th>PO Status</th>
-    <th>Qty</th>
-    <th>Date</th>
-    <th>Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-    <!--
-   <tr *ngFor="let po of supplierPOs$ | async; let i = index">
-    <td>{{i}}</td><td>{{po.poID}}</td> <td>{{po.BCP}}</td><td>{{po.SCP}}</td><td>{{po.status}}</td>
-    <td>{{po.reqQty}}</td><td>{{po.reqDate}}</td>
-    <td> 
-      <button (click)="supplierAcceptPO(po.poID)" class="tiny positive ui button">Accept</button> 
-      <button (click)="supplierRejectPO(po.poID)" class="tiny negative ui button">Reject</button>
-    </td>
-   </tr>
-   -->
-  </tbody>
-</table>
+<mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+</mat-form-field>
 
+<mat-table #poTable matSort class="mat-elevation-z8" [dataSource]="dataSource">
+	<ng-container matColumnDef="id">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.id}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="material">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>Material</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.material}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="quantity">
+        	<mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.quantity}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="status">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.status}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="supplier">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>Supplier</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.supplier}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="date">
+        	<mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.date}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="action1">
+        	<mat-header-cell *matHeaderCellDef></mat-header-cell>
+		<mat-cell *matCellDef="let po">
+			<div style="float: left; display: inline-block;" class="ui tiny positive button" (click)="acceptPO(po.id)">ACCEPT</div>
+		</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="action2">
+        	<mat-header-cell *matHeaderCellDef></mat-header-cell>
+		<mat-cell *matCellDef="let po">
+			<div style="float: left; display: inline-block;" class="ui tiny negative button" (click)="rejectPO(po.id)">REJECT</div>
+		</mat-cell>
+	</ng-container>
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    	<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+</div>
 </div>
 
 

@@ -5,7 +5,10 @@ import { BrowserAnimationsModule } 	from '@angular/platform-browser/animations';
 import { HttpClientModule } 		from '@angular/common/http';
 import { HttpModule } 			from '@angular/http';
 
-import {SuiModule} from 'ng2-semantic-ui';
+import { SuiModule } 			from 'ng2-semantic-ui';
+
+import { MatInputModule, MatPaginatorModule, MatProgressSpinnerModule, 
+         MatSortModule, MatTableModule } from "@angular/material";
 
 import { AppComponent } from './app.component';
 
@@ -29,13 +32,18 @@ export function initializeApp(appConfig: AppConfig) {
     AppComponent,
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    HttpModule,
-    HttpClientModule,
-    SuiModule,
-    StoreModule.forRoot(reducer)
+    	BrowserModule,
+    	BrowserAnimationsModule,
+    	FormsModule,
+    	HttpModule,
+    	HttpClientModule,
+    	SuiModule,
+	MatInputModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatSortModule,
+        MatProgressSpinnerModule,
+    	StoreModule.forRoot(reducer)
   ],
   providers: [
 	poService,

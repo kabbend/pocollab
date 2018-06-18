@@ -256,7 +256,7 @@ app.post("/api/login/:user/:node", function(req,res) {
                 					//	subject: user
             						//});
 							console.log("token: " + token );
-							res.status(200).send({ auth: true, idToken: token, expiresIn: 120, user: user });
+							res.status(200).send({ auth: true, idToken: token, expiresIn: 3600, user: user });
 						} else {
 							console.log("KO: Challenge & attempt are different ! ");
 							res.status(403).send({ auth: false, error: "Connection refused. Wrong challenge."});
