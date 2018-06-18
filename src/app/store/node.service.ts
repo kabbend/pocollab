@@ -17,7 +17,7 @@ export class nodeService {
 
   web3: any;
 
-  _claimContractAddr = AppConfig.settings.contracts.claimContractAddr;  // FIXME: this depends on the node !
+  _claimContractAddr = AppConfig.settings.contracts.claimContractAddr; 
   _claimContractAbi = require('../contracts/ownerclaimsContract.json');
 
   // all accounts on the node
@@ -43,6 +43,12 @@ export class nodeService {
       resolve("");
     });
 
+  }
+
+  // Get web3
+  public getNodeCnx() : any
+  {
+	return this.web3
   }
 
   // Basic test: Send a signed transaction and check that contract method has been executed by writing a new string
@@ -102,6 +108,7 @@ export class nodeService {
   // populate the web3 object with this default account for all further operations
 
   public getAccounts( callback ): Promise<string> {
+  if (this._accounts == null) {
      return new Promise<string>((resolve, reject) => {
       this.web3.eth.getAccounts((err, accs) => {
         if (err != null) { console.log('There was an error fetching your accounts.'); reject(); }
@@ -112,6 +119,8 @@ export class nodeService {
         resolve( callback ( this._accounts ));
       })
     });
+  }
+  return Promise.resolve( callback (this._accounts) );
  }
 
   public getBlockNumber( callback ): Promise<string> {

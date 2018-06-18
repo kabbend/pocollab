@@ -6,6 +6,13 @@
     "claimContractAddr": "0x1349f3e1b8d71effb47b840594ff27da7e603d17",
     "loginContractAddrNode1": "0x1932c48b2bf8102ba33b4a6b545c32236e342f34",
     "loginContractAddrNode2": "0x180893a0ec847fa8c92786791348d7d65916acbb",
-    "loginContractAbi": "./contracts/Login.v2.json"
+    "loginContractAbi": "./contracts/Login.v2.json",
+    "p2pContractAddr":"0x8c241ad4f8c0e08ecc64b7ca4350ba6a561c9217",
+    "p2pContractAbi": "./contracts/P2PContract.json",
+    "vendorAddr": "0x57742e3894c300344c4aee79bcd395109fbf6094",
+    "vendorPwd": "password",
+    "buyerAddr": "0x9186eb3d20cbd1f5f992a950d808c4495153abd5",
+    "buyerPwd": ""
     }
 }
+

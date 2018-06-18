@@ -43,17 +43,6 @@
 
 </div>
 
-<!--
-<div class="ui inverted blue segment">
-<div class="ui fluid input">
-  <input #boxAccount type="text" placeholder="your account">
-  <input #boxKey type="text" placeholder="your key">
-</div>
-<a class="ui button" (click)="login(boxAccount.value,boxKey.value)"><small>Login</small></a>
-</div>
-</div>
--->
-
 <!-- PAGE CONTENT BLOCK -->
 <div style="margin-top: 5em;" *ngIf="authService.isAuthenticated()">
 
@@ -80,39 +69,47 @@ Current Block Number: <i>{{blockNumber}}</i><br>
 
 <mat-table #poTable matSort class="mat-elevation-z8" [dataSource]="dataSource">
 	<ng-container matColumnDef="id">
-        	<mat-header-cell *matHeaderCellDef mat-sort-header>ID</mat-header-cell>
-		<mat-cell *matCellDef="let po">{{po.id}}</mat-cell>
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>PO</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.poID}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="line">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>PO Line</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.poLine}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="sl">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>PO SL</mat-header-cell>
+		<mat-cell *matCellDef="let po" >{{po.poSL}}</mat-cell>
+	</ng-container>
+	<ng-container matColumnDef="type">
+        	<mat-header-cell *matHeaderCellDef mat-sort-header>PO Type</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.poType}}</mat-cell>
 	</ng-container>
 	<ng-container matColumnDef="material">
         	<mat-header-cell *matHeaderCellDef mat-sort-header>Material</mat-header-cell>
 		<mat-cell *matCellDef="let po">{{po.material}}</mat-cell>
 	</ng-container>
 	<ng-container matColumnDef="quantity">
-        	<mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
-		<mat-cell *matCellDef="let po">{{po.quantity}}</mat-cell>
+        	<mat-header-cell *matHeaderCellDef>Req. Quantity</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.reqQty}}</mat-cell>
 	</ng-container>
 	<ng-container matColumnDef="status">
         	<mat-header-cell *matHeaderCellDef mat-sort-header>Status</mat-header-cell>
 		<mat-cell *matCellDef="let po">{{po.status}}</mat-cell>
 	</ng-container>
-	<ng-container matColumnDef="supplier">
-        	<mat-header-cell *matHeaderCellDef mat-sort-header>Supplier</mat-header-cell>
-		<mat-cell *matCellDef="let po">{{po.supplier}}</mat-cell>
-	</ng-container>
 	<ng-container matColumnDef="date">
-        	<mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
-		<mat-cell *matCellDef="let po">{{po.date}}</mat-cell>
+        	<mat-header-cell *matHeaderCellDef>Req. Date</mat-header-cell>
+		<mat-cell *matCellDef="let po">{{po.reqDate}}</mat-cell>
 	</ng-container>
 	<ng-container matColumnDef="action1">
         	<mat-header-cell *matHeaderCellDef></mat-header-cell>
-		<mat-cell *matCellDef="let po">
-			<div style="float: left; display: inline-block;" class="ui tiny positive button" (click)="acceptPO(po.id)">ACCEPT</div>
+		<mat-cell *matCellDef="let po; let i = index">
+			<div [ngClass]="{'disabled':po.status === 'OPEN'}" class="ui tiny positive button" (click)="supplierAcceptPO(i, po.poID)">Accept</div>
 		</mat-cell>
 	</ng-container>
 	<ng-container matColumnDef="action2">
         	<mat-header-cell *matHeaderCellDef></mat-header-cell>
-		<mat-cell *matCellDef="let po">
-			<div style="float: left; display: inline-block;" class="ui tiny negative button" (click)="rejectPO(po.id)">REJECT</div>
+		<mat-cell *matCellDef="let po; let i = index">
+			<div [ngClass]="{'disabled':po.status === 'OPEN'}" class="ui tiny negative button" (click)="supplierRejectPO(i, po.ID)">Reject</div>
 		</mat-cell>
 	</ng-container>
 	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

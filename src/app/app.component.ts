@@ -1,12 +1,13 @@
 import { Component, ViewChild, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { SuiModule } from 'ng2-semantic-ui';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
 
-import { SuiModule } from 'ng2-semantic-ui';
-
 import { nodeService } from './store/node.service';
 import { AuthService } from './auth.service';
+import { PO } from './store/po.model';
+import { P2PCollabService } from './store/p2pcollab.service';
 
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 
@@ -19,6 +20,7 @@ import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
   styleUrls: [
     '../../node_modules/font-awesome/css/font-awesome.min.css',
     '../assets/Semantic-UI-CSS-master/semantic.min.css',
+    './app.component.css',
   ]
 })
 
@@ -31,13 +33,37 @@ export class AppComponent implements OnInit {
   isLoading = null;
   accounts: string[] = [];
 
+  p2pPOs: PO[];
+
+/*
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
   ngAfterViewInit() {
    this.dataSource.paginator = this.paginator;
    this.dataSource.sort = this.sort;
   }
+*/
+
+  private paginator: MatPaginator;
+  private sort: MatSort;
+
+  @ViewChild(MatSort) set matSort(ms: MatSort) {
+    this.sort = ms;
+    this.setDataSourceAttributes();
+  }
+
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.setDataSourceAttributes();
+  }
+
+  setDataSourceAttributes() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    //if (this.paginator && this.sort) { this.applyFilter(''); }
+  }
+
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace
@@ -45,25 +71,12 @@ export class AppComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
-  // PO TABLE LAYOUT 
-  displayedColumns = ["id","material","status","supplier","quantity","date","action1","action2"];
- 
-  // DATA SOURCE 
-  source = [
-  { id: 1, material: 'MatNr 1', supplier: 'SupplierA', status: 'OPEN', quantity: '20', date: '2018-12-12', },
-  { id: 2, material: 'MatNr 2', supplier: 'SupplierB', status: 'OPEN', quantity: '208', date: '2028-02-12', },
-  { id: 3, material: 'MatNr 5', supplier: 'SupplierA', status: 'OPEN', quantity: '8', date: '2019-02-01', },
-  { id: 4, material: 'MatNr 1', supplier: 'SupplierA', status: 'OPEN', quantity: '2', date: '2018-12-12', },
-  { id: 5, material: 'MatNr 20', supplier: 'SupplierC', status: 'NEW ORDER PUBLISHED', quantity: '28', date: '2028-02-12', },
-  { id: 6, material: 'MatNr 8', supplier: 'SupplierD', status: 'REJECTED', quantity: '7', date: '2019-02-01', },
-  { id: 7, material: 'MatNr 1', supplier: 'SupplierA', status: 'OPEN', quantity: '100', date: '2018-12-12', },
-  { id: 8, material: 'MatNr 20', supplier: 'SupplierC', status: 'NEW ORDER PUBLISHED', quantity: '28', date: '2028-02-12', },
-  { id: 9, material: 'MatNr 2', supplier: 'SupplierD', status: 'NEW ORDER PUBLISHED', quantity: '7', date: '2019-02-01', }
-  ];
+  // smart table definition
+  // Data is empty here. Actual data will be loaded once we load all the POs at login()
+  dataSource = new MatTableDataSource<PO>();
+  displayedColumns = ["id","line","sl","type","material","status","quantity","date","action1","action2"];
 
-  dataSource = new MatTableDataSource<object>(this.source);
-
-  constructor(private nodeService : nodeService, private authService: AuthService ) { 
+  constructor(private nodeService : nodeService, private p2pCollabService : P2PCollabService ,private authService: AuthService ) {
   }
 
   ngOnInit() : void {
@@ -92,10 +105,23 @@ export class AppComponent implements OnInit {
     		this.nodeService.getAccounts( res => { 
 			this.accounts = res; 
 			if (res && res.length != 0) this.defaultAccount = res[0]; 
-		});
+			});
+
 
 		});
-  	},
+  		
+		// Use p2pService to retreive all the POs
+                console.log("debug:     before p2p init");
+                this.p2pCollabService.init(this.nodeService.getNodeCnx());
+
+                // get All POs from smart contract
+                console.log("debug:     before p2p getpos");
+                this.p2pCollabService.getPOs( res => {
+                    this.p2pPOs = res;
+		    console.log("retrieved " + this.p2pPOs.length + " POs");
+		    this.dataSource.data = this.p2pPOs;
+                    });
+	},
 
 	error => {
 
@@ -121,14 +147,15 @@ export class AppComponent implements OnInit {
   }
 
 
-  rejectPO( id: string ) {
-	console.log("je rejette la po " + id );
-	this.source[parseInt(id)-1].status="REJECTED";
+  supplierAcceptPO(index:number,id:string) {
+   console.log("accept on line " + index + " with id " + id);
+   this.p2pPOs[index].status="OPEN";
+   this.p2pCollabService.supplierAcceptPO(id);
   }
 
-  acceptPO( id: string ) {
-	console.log("j'accepte la po " + id );
-	this.source[parseInt(id)-1].status="ACCEPTED";
+  supplierRejectPO(index:number,id:string) {
+   // Not implemented yet
+   // this.p2pCollabService.supplierRejectPO(id);
   }
 
 }
