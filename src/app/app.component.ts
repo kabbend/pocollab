@@ -60,7 +60,6 @@ export class AppComponent implements OnInit {
   setDataSourceAttributes() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
     //if (this.paginator && this.sort) { this.applyFilter(''); }
   }
 
@@ -74,7 +73,7 @@ export class AppComponent implements OnInit {
   // smart table definition
   // Data is empty here. Actual data will be loaded once we load all the POs at login()
   dataSource = new MatTableDataSource<PO>();
-  displayedColumns = ["id","line","sl","type","material","status","quantity","date","action1","action2"];
+  displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2"];
 
   constructor(private nodeService : nodeService, private p2pCollabService : P2PCollabService ,private authService: AuthService ) {
   }
@@ -146,10 +145,13 @@ export class AppComponent implements OnInit {
         });
   }
 
+  findPObyID(id:string) {
+	for (let i=0;i<this.p2pPOs.length;i++) if (this.p2pPOs[i].poID == id) return this.p2pPOs[i];
+  }
 
   supplierAcceptPO(index:number,id:string) {
    console.log("accept on line " + index + " with id " + id);
-   this.p2pPOs[index].status="OPEN";
+   this.findPObyID(id).status="OPEN";
    this.p2pCollabService.supplierAcceptPO(id);
   }
 

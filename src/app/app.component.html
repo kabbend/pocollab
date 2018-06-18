@@ -68,19 +68,19 @@ Current Block Number: <i>{{blockNumber}}</i><br>
 </mat-form-field>
 
 <mat-table #poTable matSort class="mat-elevation-z8" [dataSource]="dataSource">
-	<ng-container matColumnDef="id">
+	<ng-container matColumnDef="poID">
         	<mat-header-cell *matHeaderCellDef mat-sort-header>PO</mat-header-cell>
 		<mat-cell *matCellDef="let po">{{po.poID}}</mat-cell>
 	</ng-container>
-	<ng-container matColumnDef="line">
+	<ng-container matColumnDef="poLine">
         	<mat-header-cell *matHeaderCellDef mat-sort-header>PO Line</mat-header-cell>
 		<mat-cell *matCellDef="let po">{{po.poLine}}</mat-cell>
 	</ng-container>
-	<ng-container matColumnDef="sl">
+	<ng-container matColumnDef="poSL">
         	<mat-header-cell *matHeaderCellDef mat-sort-header>PO SL</mat-header-cell>
 		<mat-cell *matCellDef="let po" >{{po.poSL}}</mat-cell>
 	</ng-container>
-	<ng-container matColumnDef="type">
+	<ng-container matColumnDef="poType">
         	<mat-header-cell *matHeaderCellDef mat-sort-header>PO Type</mat-header-cell>
 		<mat-cell *matCellDef="let po">{{po.poType}}</mat-cell>
 	</ng-container>
