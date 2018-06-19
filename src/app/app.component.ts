@@ -1,3 +1,4 @@
+import { trigger, state, transition, style, animate } from '@angular/animations';
 import { Component, ViewChild, OnInit, Input, Output, EventEmitter, AfterViewInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { SuiModule } from 'ng2-semantic-ui';
@@ -17,6 +18,14 @@ import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 @Component({
   selector: 		'app-root',
   templateUrl:		'./app.component.html',
+  animations: [
+    trigger('visibilityChanged', [
+      state('shown', style({ opacity: 1 })),
+      state('hidden', style({ opacity: 0 })),
+      transition('shown => hidden', animate('600ms')),
+      transition('hidden => shown', animate('300ms')),
+    ])
+  ],
   styleUrls: [
     '../../node_modules/font-awesome/css/font-awesome.min.css',
     '../assets/Semantic-UI-CSS-master/semantic.min.css',
@@ -35,6 +44,7 @@ export class AppComponent implements OnInit {
 
   p2pPOs: PO[];
   poUpdateStatus = '';
+  visiblityState = 'hidden';
 
 /*
   @ViewChild(MatSort) sort: MatSort;
@@ -159,7 +169,11 @@ export class AppComponent implements OnInit {
 	} else { 
 		console.log("p2pCollabService returned false. Sorry."); 
 		this.poUpdateStatus = 'Cannot update PO ' + id + ' in the blockchain';
-	} });
+	} 
+  	this.visiblityState = 'shown';
+	setTimeout( () => { this.visiblityState = 'hidden'; }, 5000 );
+
+    });
   }
 
   supplierRejectPO(index:number,id:string) {
