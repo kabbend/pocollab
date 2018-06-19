@@ -34,6 +34,7 @@ export class AppComponent implements OnInit {
   accounts: string[] = [];
 
   p2pPOs: PO[];
+  poUpdateStatus = '';
 
 /*
   @ViewChild(MatSort) sort: MatSort;
@@ -151,8 +152,14 @@ export class AppComponent implements OnInit {
 
   supplierAcceptPO(index:number,id:string) {
    console.log("accept on line " + index + " with id " + id);
-   this.findPObyID(id).status="OPEN";
-   this.p2pCollabService.supplierAcceptPO(id);
+   this.p2pCollabService.supplierAcceptPO(id).then( ret => {
+   	if (ret) { 
+		console.log("p2pCollabService returned true."); 
+		this.poUpdateStatus = 'PO ' + id + ' updated successfully in the blockchain';
+	} else { 
+		console.log("p2pCollabService returned false. Sorry."); 
+		this.poUpdateStatus = 'Cannot update PO ' + id + ' in the blockchain';
+	} });
   }
 
   supplierRejectPO(index:number,id:string) {

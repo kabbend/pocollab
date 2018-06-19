@@ -106,36 +106,47 @@ this._table[_i-1].reqDate = xmlOrder['ZORDERS05']['IDOC']['E1EDP01']['Z1ZAIREDP2
 //-----------------------------
 // Supplier Accept PO
 //-----------------------------
-public supplierAcceptPO(id: string) { 
+public supplierAcceptPO(id: string): Promise<boolean> { 
 
-    //this._web3.personal.unlockAccount("0x57742e3894c300344c4aee79bcd395109fbf6094", "password", 300,
-    this._web3.personal.unlockAccount(this._vendorAddress, this._vendorPwd, 300,
-	 (error, result) => { if (error) {console.log("UnlockAccout ERROR : "+error);}
-		else{
-		console.log("UnlockAccout RESULT : "+result);
-        var sid = id + "";
-        console.log(" ==> acceptOrder() id = " + sid);
-       this._tokenContract.acceptOrder(sid ,"",{gas : 10000000, from : this._vendorAddress},function (error, result
-){ if (error){console.log("acceptOrder ERROR : "+error);}else{console.log("acceptOrder RESULT : "+result);}})
-
+    return new Promise<boolean>( (resolve,reject) => { 
+    	this._web3.personal.unlockAccount(this._vendorAddress, this._vendorPwd, 300, (error, result) => { 
+		if (error) {
+			console.log("UnlockAccount ERROR : "+error);
+			resolve(false);
+		} else{ 
+			console.log("UnlockAccount RESULT : "+result);
+        		var sid = id + "";
+        		console.log(" ==> acceptOrder() id = " + sid);
+       			this._tokenContract.acceptOrder(sid ,"",{gas : 10000000, from : this._vendorAddress},function (error, result){ 
+				if (error){
+					console.log("acceptOrder ERROR : "+error);
+					resolve(false);
+				} else {
+					console.log("acceptOrder RESULT : "+result);
+				}})
 		}}); 
 
 
-  // Watch the event
-  this._orderEvent = this._tokenContract.OrderSent({}, {fromBlock: 0, toBlock: 'latest'});
-  this._orderEvent.watch((error, result) => {
-    if(!error) {
-        // do what you want to do with the event data
-	if (id == result.args.po_id){
-	console.log("BINGO PO id = " + result.args.po_id + " Num Order = " + result.args.orderno);
-	var no = result.args.orderno + 0;
-        this._table[no].status="OPEN";
-	}	
-        console.log("RESULT: PO id = " + result.args.po_id + " Num Order = " + result.args.orderno)
-    } 
-   });
+  	// Watch the event
+  	this._orderEvent = this._tokenContract.OrderSent({}, {fromBlock: 0, toBlock: 'latest'});
+  	this._orderEvent.watch( (error, result) => {
+    		if (!error) {
+        		// do what you want to do with the event data
+			if (id == result.args.po_id){
+				console.log("BINGO PO id = " + result.args.po_id + " Num Order = " + result.args.orderno);
+				var no = parseInt(result.args.orderno) ;
+				console.log("about to update _table at rank '" + no + "'");
+        			this._table[no-1].status="OPEN"; // I think there is a shift in the index ( hence -1 )
+        			console.log("RESULT: PO id = " + result.args.po_id + " Num Order = " + result.args.orderno)
+				resolve(true);
+			}	
+    		} else {
+			resolve(false);
+		}});
 
-    console.log("Accept Button Clicked !! id = " + id);
+    	console.log("Accept Button Clicked !! id = " + id);
+
+	});
 
 }
 
