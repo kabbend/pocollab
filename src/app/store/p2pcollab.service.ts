@@ -108,6 +108,8 @@ this._table[_i-1].reqDate = xmlOrder['ZORDERS05']['IDOC']['E1EDP01']['Z1ZAIREDP2
 //-----------------------------
 public supplierAcceptPO(id: string): Promise<boolean> { 
 
+    console.log("entering p2pCollabService.supplierAcceptPO(" + id + ")");
+
     return new Promise<boolean>( (resolve,reject) => { 
     	this._web3.personal.unlockAccount(this._vendorAddress, this._vendorPwd, 300, (error, result) => { 
 		if (error) {
@@ -124,27 +126,25 @@ public supplierAcceptPO(id: string): Promise<boolean> {
 				} else {
 					console.log("acceptOrder RESULT : "+result);
 				}})
+  			// Watch the event
+  			this._orderEvent = this._tokenContract.OrderSent({}, {fromBlock: 0, toBlock: 'latest'});
+  			this._orderEvent.watch( (error, result) => {
+    			if (!error) {
+        			// do what you want to do with the event data
+				if (id == result.args.po_id){
+					console.log("BINGO PO id = " + result.args.po_id + " Num Order = " + result.args.orderno);
+					var no = parseInt(result.args.orderno) ;
+					console.log("about to update _table at rank '" + no + "'");
+        				this._table[no-1].status="OPEN"; // I think there is a shift in the index ( hence -1 )
+        				console.log("RESULT: PO id = " + result.args.po_id + " Num Order = " + result.args.orderno)
+					resolve(true);
+				}	
+    			} else {
+				resolve(false);
+			}});
+
 		}}); 
 
-
-  	// Watch the event
-  	this._orderEvent = this._tokenContract.OrderSent({}, {fromBlock: 0, toBlock: 'latest'});
-  	this._orderEvent.watch( (error, result) => {
-    		if (!error) {
-        		// do what you want to do with the event data
-			if (id == result.args.po_id){
-				console.log("BINGO PO id = " + result.args.po_id + " Num Order = " + result.args.orderno);
-				var no = parseInt(result.args.orderno) ;
-				console.log("about to update _table at rank '" + no + "'");
-        			this._table[no-1].status="OPEN"; // I think there is a shift in the index ( hence -1 )
-        			console.log("RESULT: PO id = " + result.args.po_id + " Num Order = " + result.args.orderno)
-				resolve(true);
-			}	
-    		} else {
-			resolve(false);
-		}});
-
-    	console.log("Accept Button Clicked !! id = " + id);
 
 	});
 

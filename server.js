@@ -27,10 +27,10 @@ var web3_node1, web3_node2;
 var NODE_PORT = [ 22000, 22003 ];
 
 if (typeof web3_node1 !== 'undefined') { web3_node1 = new Web3(web3.currentProvider); } 
-else { web3_node1 = new Web3(new Web3.providers.HttpProvider("http://localhost:" + NODE_PORT[0])); }
+else { web3_node1 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:" + NODE_PORT[0])); }
 
 if (typeof web3_node2 !== 'undefined') { web3_node2 = new Web3(web3.currentProvider); } 
-else { web3_node2 = new Web3(new Web3.providers.HttpProvider("http://localhost:" + NODE_PORT[1])); }
+else { web3_node2 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:" + NODE_PORT[1])); }
 
 console.log("config file for " + config.env.name );
 console.log("NODE 1 on port " +  NODE_PORT[0]);
@@ -130,7 +130,7 @@ app.post("/api/challenge", function(req,res) {
     }
 
     // From here, addr, contractAddr, web3 and contract are set properly
-
+    
     // store this challenge using the superuser account
     // here we use a signed tx instead of doing an unsecure call:
     //    web3.personal.unlockAccount(user,"",1);
@@ -255,8 +255,14 @@ app.post("/api/login/:user/:node", function(req,res) {
                 					//	expiresIn: 120,
                 					//	subject: user
             						//});
+
+							// retrieve the user roles
+							var roles = contract.getRoles( user );
+
 							console.log("token: " + token );
-							res.status(200).send({ auth: true, idToken: token, expiresIn: 3600, user: user });
+							console.log("user roles: " + roles );
+
+							res.status(200).send({ auth: true, idToken: token, expiresIn: 3600, user: user, roles: roles });
 						} else {
 							console.log("KO: Challenge & attempt are different ! ");
 							res.status(403).send({ auth: false, error: "Connection refused. Wrong challenge."});

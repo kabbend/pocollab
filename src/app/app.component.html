@@ -1,7 +1,7 @@
 <div class="ui fixed inverted borderless pointing menu">
       <a href="#" class="item">
         <img class="logo" src="assets/p2p.png"> &nbsp;Collaboration BC
-        <div class="item" *ngIf="authService.isAuthenticated()">currently logged on Node {{authService.getNode()}}</div>
+        <div class="item" *ngIf="authService.isAuthenticated()">[ currently logged on Node {{authService.getNode()}} as {{authService.getRoles()}} ]</div>
       </a>
       <div class="right menu">
       	  <div class="item" *ngIf="authService.isAuthenticated()"> <a class="ui button" (click)="logout()"><small>Log out</small></a> </div>
@@ -117,7 +117,7 @@ Current Block Number: <i>{{blockNumber}}</i><br>
 </mat-table>
 <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 <div [@visibilityChanged]="visiblityState" > 
-  <div class="ui label">{{poUpdateStatus}}</div>
+  <div [ngClass]="{'red':visiblityAlert === true}" class="ui label">{{poUpdateStatus}}</div>
 </div>
 
 

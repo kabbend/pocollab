@@ -89,10 +89,11 @@ export class AuthService {
   private setSession(authRes,nodeIndex): void {
     // Set the time that the access token will expire at
     const expiresAt = JSON.stringify((authRes.expiresIn * 1000) + new Date().getTime());
-    console.log("setting session with user " + authRes.user + ", token=" + authRes.idToken );
+    console.log("setting session with user " + authRes.user + ", roles = " + authRes.roles + ", token=" + authRes.idToken );
     localStorage.setItem('id_token', authRes.idToken);
     localStorage.setItem('expires_at', expiresAt);
     localStorage.setItem('p2p_user', authRes.user);
+    localStorage.setItem('p2p_roles', authRes.roles);
     localStorage.setItem('p2p_nodeIndex', nodeIndex);
   }
 
@@ -101,6 +102,7 @@ export class AuthService {
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
     localStorage.removeItem('p2p_user');
+    localStorage.removeItem('p2p_roles');
     localStorage.removeItem('p2p_nodeIndex');
   }
 
@@ -111,6 +113,10 @@ export class AuthService {
     // Check whether the current time is past the access token's expiry time
     const expiresAt = JSON.parse(localStorage.getItem('expires_at'));
     return new Date().getTime() < expiresAt;
+  }
+
+  public getRoles(): string {
+    return localStorage['p2p_roles']; 
   }
 
   public getUser(): string {

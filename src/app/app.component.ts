@@ -45,6 +45,7 @@ export class AppComponent implements OnInit {
   p2pPOs: PO[];
   poUpdateStatus = '';
   visiblityState = 'hidden';
+  visiblityAlert = false;
 
 /*
   @ViewChild(MatSort) sort: MatSort;
@@ -169,9 +170,11 @@ export class AppComponent implements OnInit {
    this.p2pCollabService.supplierAcceptPO(id).then( ret => {
    	if (ret) { 
 		console.log("p2pCollabService returned true."); 
+  		this.visiblityAlert = false;
 		this.poUpdateStatus = 'PO ' + id + ' updated successfully in the blockchain';
 	} else { 
 		console.log("p2pCollabService returned false. Sorry."); 
+  		this.visiblityAlert = true;
 		this.poUpdateStatus = 'Cannot update PO ' + id + ' in the blockchain';
 	} 
   	this.visiblityState = 'shown';
