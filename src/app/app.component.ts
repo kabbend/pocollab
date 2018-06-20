@@ -87,19 +87,13 @@ export class AppComponent implements OnInit {
   displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2"];
 
   constructor(private nodeService : nodeService, private p2pCollabService : P2PCollabService ,private authService: AuthService ) {
+	if (this.authService.isAuthenticated()) this.loadInitialData();
   }
 
   ngOnInit() : void {
   }
 
-  login( account: string, key: string ) {
-
-    this.loginStatus = '';
-
-    this.authService.login( account, key )
-     .then( 
-	logged => {
-
+  loadInitialData() : void {
 		// initialize the connection to the node prior to anything else !!
     		this.nodeService.init().then( initialized => { 
 
@@ -131,6 +125,16 @@ export class AppComponent implements OnInit {
 		    console.log("retrieved " + this.p2pPOs.length + " POs");
 		    this.dataSource.data = this.p2pPOs;
                     });
+  }
+
+  login( account: string, key: string ) {
+
+    this.loginStatus = '';
+
+    this.authService.login( account, key )
+     .then( 
+	logged => {
+		this.loadInitialData();
 	},
 
 	error => {
