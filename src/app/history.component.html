@@ -1,17 +1,21 @@
-<div class="ui celled table">
-  <thead>
-    <tr><th>PO</th>
-    <th>Event</th>
-    <th>Block</th>
-    <th>Timestamp</th>
-  </tr></thead>
-  <tbody>
-    <tr *ngFor="let event of history_table">
-      <td>{{event.poID}}</td>
-      <td>{{event.type}}</td>
-      <td>{{event.block}}</td>
-      <td>{{event.timestamp}}</td>
-    </tr>
-  </tbody>
-</div>
+<mat-table #historyTable class="mat-elevation-z4" [dataSource]="dataSource">
+        <ng-container matColumnDef="poID">
+                <mat-header-cell *matHeaderCellDef>PO</mat-header-cell>
+                <mat-cell *matCellDef="let po">{{po.poID}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef>Type of event</mat-header-cell>
+                <mat-cell *matCellDef="let po">{{po.type}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="block">
+                <mat-header-cell *matHeaderCellDef>Block #</mat-header-cell>
+                <mat-cell *matCellDef="let po">{{po.block}}</mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="timestamp">
+                <mat-header-cell *matHeaderCellDef>Timestamp</mat-header-cell>
+                <mat-cell *matCellDef="let po">{{po.timestamp}}</mat-cell>
+        </ng-container>
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+</mat-table>
 

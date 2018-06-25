@@ -75,10 +75,18 @@ export class AppComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
+  selectedRowIndex: number = -1;
+
+  highlight(row){
+    this.selectedRowIndex = row.poID;
+    this.history(row.poID);
+  }
+
   // smart table definition
   // Data is empty here. Actual data will be loaded once we load all the POs at login()
   dataSource = new MatTableDataSource<PO>();
-  displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2","history"];
+  //displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2","history"];
+  displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2"];
 
   constructor(private nodeService : nodeService, private p2pCollabService : P2PCollabService ,private authService: AuthService ) {
 	if (this.authService.isAuthenticated()) this.loadInitialData();

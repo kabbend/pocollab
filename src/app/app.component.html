@@ -59,13 +59,13 @@ Current Block Number: <i>{{blockNumber}}</i><br>
 </div>
 -->
 
-<div class="ui segment">
-
-<h3>PO in the Blockchain:</h3>
 
 <mat-form-field>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
 </mat-form-field>
+<div style="display:inline-block;position:absolute;right:20px;" [@visibilityChanged]="visiblityState" > 
+  <div [ngClass]="{'red':visiblityAlert === true}" class="ui label">{{poUpdateStatus}}</div>
+</div>
 
 <mat-table #poTable matSort class="mat-elevation-z8" [dataSource]="dataSource">
 	<ng-container matColumnDef="poID">
@@ -119,16 +119,22 @@ Current Block Number: <i>{{blockNumber}}</i><br>
 		</mat-cell>
 	</ng-container>
 	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    	<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    	<mat-row [ngClass]="{'highlight': selectedRowIndex == row.poID}"
+         (click)="highlight(row)" *matRowDef="let row; columns: displayedColumns"></mat-row>
 </mat-table>
 <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-<div [@visibilityChanged]="visiblityState" > 
-  <div [ngClass]="{'red':visiblityAlert === true}" class="ui label">{{poUpdateStatus}}</div>
-</div>
 
-<history [poID]="requestedHistory" ></history>
-
-</div>
+<sui-accordion >
+    <sui-accordion-panel [isOpen]="false">
+        <div title>
+            <i class="dropdown icon"></i>Historical record of the PO 
+        </div>
+        <div content>
+		<history [poID]="requestedHistory" ></history>
+	</div>
+    </sui-accordion-panel>
+</sui-accordion>
+	
 </div>
 
 
