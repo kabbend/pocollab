@@ -112,6 +112,12 @@ Current Block Number: <i>{{blockNumber}}</i><br>
 			<div [ngClass]="{'disabled':po.status === 'OPEN'}" class="ui tiny negative button" (click)="supplierRejectPO(i, po.ID)">Reject</div>
 		</mat-cell>
 	</ng-container>
+	<ng-container matColumnDef="history">
+        	<mat-header-cell *matHeaderCellDef></mat-header-cell>
+		<mat-cell *matCellDef="let po; let i = index">
+			<a style="cursor:pointer;" (click)="history(po.poID)">history</a>
+		</mat-cell>
+	</ng-container>
 	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     	<mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
 </mat-table>
@@ -120,6 +126,7 @@ Current Block Number: <i>{{blockNumber}}</i><br>
   <div [ngClass]="{'red':visiblityAlert === true}" class="ui label">{{poUpdateStatus}}</div>
 </div>
 
+<history [poID]="requestedHistory" ></history>
 
 </div>
 </div>

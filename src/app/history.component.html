@@ -1,0 +1,17 @@
+<div class="ui celled table">
+  <thead>
+    <tr><th>PO</th>
+    <th>Event</th>
+    <th>Block</th>
+    <th>Timestamp</th>
+  </tr></thead>
+  <tbody>
+    <tr *ngFor="let event of history_table">
+      <td>{{event.poID}}</td>
+      <td>{{event.type}}</td>
+      <td>{{event.block}}</td>
+      <td>{{event.timestamp}}</td>
+    </tr>
+  </tbody>
+</div>
+

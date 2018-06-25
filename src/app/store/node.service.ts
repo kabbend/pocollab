@@ -36,7 +36,7 @@ export class nodeService {
 	};
 
     return new Promise<string>( (resolve,reject) => {
-      var provider = new HttpHeaderProvider('http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:8080', headers);
+      var provider = new HttpHeaderProvider('http://ec2-34-241-14-11.eu-west-1.compute.amazonaws.com:8080', headers);
       this.web3 = new Web3(provider);
       console.log("connected to node " + this.authService.getNode() + " via web3");
       console.log("claim contract addr: " + this._claimContractAddr);

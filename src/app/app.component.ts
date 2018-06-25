@@ -47,14 +47,7 @@ export class AppComponent implements OnInit {
   visiblityState = 'hidden';
   visiblityAlert = false;
 
-/*
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  ngAfterViewInit() {
-   this.dataSource.paginator = this.paginator;
-   this.dataSource.sort = this.sort;
-  }
-*/
+  requestedHistory = '';
 
   private paginator: MatPaginator;
   private sort: MatSort;
@@ -85,7 +78,7 @@ export class AppComponent implements OnInit {
   // smart table definition
   // Data is empty here. Actual data will be loaded once we load all the POs at login()
   dataSource = new MatTableDataSource<PO>();
-  displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2"];
+  displayedColumns = ["poID","poLine","poSL","poType","material","status","quantity","date","action1","action2","history"];
 
   constructor(private nodeService : nodeService, private p2pCollabService : P2PCollabService ,private authService: AuthService ) {
 	if (this.authService.isAuthenticated()) this.loadInitialData();
@@ -161,8 +154,8 @@ export class AppComponent implements OnInit {
         });
   }
 
-  findPObyID(id:string) {
-	for (let i=0;i<this.p2pPOs.length;i++) if (this.p2pPOs[i].poID == id) return this.p2pPOs[i];
+  history( poID: string ) {
+	this.requestedHistory = poID;
   }
 
   supplierAcceptPO(index:number,id:string) {

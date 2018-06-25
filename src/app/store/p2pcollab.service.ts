@@ -4,7 +4,10 @@ import * as Web3 from 'web3';
 import {Buffer} from 'buffer';          // required during tx signature
 import { AppConfig } from '../app.config';
 
+import { poEvent } from '../poEvent.model';
 
+import { DatePipe } from '@angular/common';
+const datePipe = new DatePipe('en-US');
 
 declare let require: any;
 declare let window: any;
@@ -13,7 +16,6 @@ let p2pAbi = require('../contracts/P2PContract.json');
 
 @Injectable()
 export class P2PCollabService {
-
 
   _web3: any;
   private _tokenContract: any;
@@ -57,14 +59,12 @@ public init( web3 : any)
 //---------------------------
 public getPOs(callback){
 
+  var result : any;
+  var fastXmlParser = require('fast-xml-parser');
+  var nbPO = this._tokenContract.getOrderseq();
+  console.log("Nb Orders  = " + nbPO);
 
-
-var result : any;
-
-var nbPO = this._tokenContract.getOrderseq();
-console.log("Nb Orders  = " + nbPO);
-
-for (var _i = 1; _i <= nbPO; _i++) {
+  for (var _i = 1; _i <= nbPO; _i++) {
 
 //initialize the PO in PO[]
 if (this._table.length == _i-1){
@@ -75,7 +75,6 @@ var result : any;
 result = this._tokenContract.queryOrder(_i);
 
 var xml = result[2];
-var fastXmlParser = require('fast-xml-parser');
 var xmlOrder = fastXmlParser.parse(xml);
 console.log(" _i = " + _i);
 console.log("IDOC (" + _i + ") = " + xmlOrder['ZORDERS05']['IDOC']['EDI_DC40']['DOCNUM']);
@@ -148,7 +147,35 @@ public supplierAcceptPO(id: string): Promise<boolean> {
 
 	});
 
-}
+  }
+
+  public retrieveOrderAccepted( poID: string ) : Promise<poEvent[]> {
+ 	return new Promise( (resolve,reject) => {
+		console.log("in p2p service, poID = " + poID + ", contract = " + this._tokenContractAddress);
+		console.log("in p2p service, event signature = " + AppConfig.settings.events.OrderAccepted);
+		if (poID == "") resolve([]); // I need a real PO ID to search
+		const filter = this._web3.eth.filter({
+  			fromBlock: 0,
+  			toBlock: 'latest',
+  			address: this._tokenContractAddress,
+  			topics: [AppConfig.settings.events.OrderAccepted]
+			}).get( (err, result) => {
+				var ev : poEvent[] = [];
+				if (result && result.length > 0) 
+				  for(var i=0;i<result.length;i++) 
+				    { 
+				        console.log( i + " " + result[i].blockNumber + " " + result[i].data + " |" + this._web3.toAscii('0x'+result[i].data.substr(192+2)) + "|" );
+					var id = this._web3.toAscii('0x'+result[i].data.substr(192+2));
+				    	if (id.indexOf(poID)>=0) {
+						var timestamp = new Date(this._web3.eth.getBlock(parseInt(result[i].blockNumber)).timestamp / 1000000);
+						const t = datePipe.transform(timestamp, 'full');
+						ev.push( { poID: poID, type:"OrderAccepted", block: result[i].blockNumber, timestamp: t });
+				    	}
+				    }
+			   	resolve(ev);
+			});
+  	});
+  }
 
 }
 

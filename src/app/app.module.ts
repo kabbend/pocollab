@@ -18,6 +18,8 @@ import { nodeService }        from './store/node.service';
 import { AuthService }        from './auth.service';
 import { P2PCollabService }   from './store/p2pcollab.service';
 
+import { HistoryComponent }   from './history.component';
+
 import { APP_INITIALIZER } from '@angular/core';
 import { AppConfig } from './app.config';
 
@@ -31,6 +33,7 @@ export function initializeApp(appConfig: AppConfig) {
 @NgModule({
   declarations: [
     AppComponent,
+    HistoryComponent,
   ],
   imports: [
     	BrowserModule,

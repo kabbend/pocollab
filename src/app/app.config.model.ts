@@ -2,6 +2,9 @@ export interface IAppConfig {
     env: {
         name: string;
     };
+    events: {
+        OrderAccepted: string;
+    };
     contracts: {
         claimContractAddr: string;
         loginContractAddrNode1: string;

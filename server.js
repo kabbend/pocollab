@@ -4,16 +4,13 @@ var bodyParser = require("body-parser");
 var jwt = require('jsonwebtoken');
 var Tx = require('ethereumjs-tx');      // required to sign transactions
 var Buffer = require('buffer').Buffer;
-//var bcrypt = require('bcryptjs');
 var app = express();
 
 var config = require("./src/assets/config.dev.json");
-//var loginContractAbi = require("./src/app/contracts/Login.v2.json");
 var loginContractAbi = require("./src/app/" + config.contracts.loginContractAbi);
 
 // server & superuser information
 // FIXME avoid hardcoding and in clear !!
-
 var secret = 'supersecret';  // JWT token secret
 var superuser = '0xed9d02e382b34818e88b88a309c7fe71e65f419d';	// BC super account
 var superkey = 'e6181caaffff94a09d7e332fc8da9884d99902c7874eb74354bdcadf411929f1';  // corresponding key
@@ -27,10 +24,10 @@ var web3_node1, web3_node2;
 var NODE_PORT = [ 22000, 22003 ];
 
 if (typeof web3_node1 !== 'undefined') { web3_node1 = new Web3(web3.currentProvider); } 
-else { web3_node1 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:" + NODE_PORT[0])); }
+else { web3_node1 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-241-14-11.eu-west-1.compute.amazonaws.com:" + NODE_PORT[0])); }
 
 if (typeof web3_node2 !== 'undefined') { web3_node2 = new Web3(web3.currentProvider); } 
-else { web3_node2 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-243-190-121.eu-west-1.compute.amazonaws.com:" + NODE_PORT[1])); }
+else { web3_node2 = new Web3(new Web3.providers.HttpProvider("http://ec2-34-241-14-11.eu-west-1.compute.amazonaws.com:" + NODE_PORT[1])); }
 
 console.log("config file for " + config.env.name );
 console.log("NODE 1 on port " +  NODE_PORT[0]);
@@ -70,19 +67,6 @@ function handleError(res, reason, message, code) {
 //
 // REST API below
 //
-
-// GET /api/accounts		retrieve all accounts on the node
-//app.get("/api/accounts", function(req,res) {
-//    res.send(JSON.stringify(web3.eth.accounts));
-//  }
-//);
-
-// GET /api/blockNumber		retrieve the current block number
-//app.get("/api/blockNumber", function(req,res) {
-//    res.send(JSON.stringify(web3.eth.blockNumber));
-//  }
-//);
-
 
 // POST  /api/challenge		send a prepared transaction to the requestor, for the given user or email given in the body
 app.post("/api/challenge", function(req,res) {
@@ -176,28 +160,6 @@ app.post("/api/challenge", function(req,res) {
   }
 );
 
-// GET  /api/testToken		basic test of the incoming token
-app.get("/api/testToken", function(req,res) {
-  console.log("someone is testing me ...");
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  // decode token
-  if (token) {
-
-    // verifies secret and checks exp
-    jwt.verify(token, secret, function(err, decoded) {      
-      if (err) {
-        console.log('Failed to authenticate token.');    
-      } else {
-        console.log('Token OK !');    
-      }
-     });
-
-  } else {
-        console.log('NO TOKEN FOUND!');    
-  }
-});
-
  
 // POST /api/login/:user/:node	forward to the BC a signed raw transaction as authentication method for the given user
 //				then check for the transaction to be properly mined, and check the challenge
@@ -250,11 +212,6 @@ app.post("/api/login/:user/:node", function(req,res) {
     							var token = jwt.sign({ "sub": user }, secret, {
       									expiresIn: 3600 // expires in 1 hour
     							});
-							//const token = jwt.sign({}, secret, {
-                					//	algorithm: 'RS256',
-                					//	expiresIn: 120,
-                					//	subject: user
-            						//});
 
 							// retrieve the user roles
 							var roles = contract.getRoles( user );
